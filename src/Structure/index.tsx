@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
   TreeList,
   Editing,
@@ -14,16 +14,15 @@ import {
 } from "devextreme-react/tree-list";
 import { store, IStructureProps } from "../structure";
 
+import "./index.scss";
+
 interface IProps {
   structuresData: IStructureProps[];
+  structureData?: IStructureProps;
 }
 
 export const Structure: React.FunctionComponent<IProps> = (props: IProps) => {
-  const { structuresData } = props;
-  useEffect(() => {
-    console.log("-------------------------", structuresData);
-    console.log("store", store);
-  }, [store]);
+  const { structuresData, structureData } = props;
 
   const expandedRowKeys = [1];
 
@@ -38,13 +37,18 @@ export const Structure: React.FunctionComponent<IProps> = (props: IProps) => {
   };
 
   const onEditorPreparing = (e: any) => {
-    if (e.dataField === "Parent_ID" && e.row.data.id === 1) {
+    if (e.dataField === "parent_id" && e.row.data.id === 1) {
       e.editorOptions.disabled = true;
       e.editorOptions.value = null;
     }
   };
   const onInitNewRow = (e: any) => {
     e.data.parent_id = 1;
+  };
+
+  const renderTableCell = (data: any) => {
+    console.log(data);
+    return <div>{data.value ? "Active" : "Deactive"}</div>;
   };
 
   return (
@@ -55,11 +59,10 @@ export const Structure: React.FunctionComponent<IProps> = (props: IProps) => {
         showRowLines={true}
         showBorders={true}
         defaultExpandedRowKeys={expandedRowKeys}
-        keyExpr="ID"
-        parentIdExpr="Parent_ID"
+        keyExpr="id"
+        parentIdExpr="parent_id"
         onEditorPreparing={onEditorPreparing}
         onInitNewRow={onInitNewRow}
-        selectedRowKeys={[1]}
       >
         <StateStoring
           enabled={true}
@@ -77,14 +80,17 @@ export const Structure: React.FunctionComponent<IProps> = (props: IProps) => {
           popup={popupOptions}
           mode="popup"
         />
-        <Column dataField="Name">
+        <Column dataField="name">
           <ValidationRule type="required" />
         </Column>
-        <Column dataField="Status" caption="Status">
-          <ValidationRule type="required" />
-        </Column>
-        <Column visible={false} dataField="Parent_ID" caption="Parent">
-          <Lookup dataSource={lookupData} valueExpr="ID" displayExpr="Name" />
+        <Column
+          dataField="status"
+          dataType={structureData?.status}
+          cellRender={renderTableCell}
+          filterType="string"
+        />
+        <Column visible={false} dataField="parent_id" caption="Parent">
+          <Lookup dataSource={lookupData} valueExpr="id" displayExpr="name" />
           <ValidationRule type="required" />
         </Column>
         <Column type="buttons">
