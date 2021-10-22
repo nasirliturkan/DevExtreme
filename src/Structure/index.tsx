@@ -11,10 +11,17 @@ import {
   HeaderFilter,
   SearchPanel,
   StateStoring,
+  Paging,
+  Pager,
+  Scrolling,
+  RequiredRule,
+  Popup,
+  PatternRule,
+  StringLengthRule,
 } from "devextreme-react/tree-list";
-import { store, IStructureProps } from "../structure";
+import { store, IStructureProps } from "./data";
 
-import "./index.scss";
+import "../assets/style.scss";
 
 interface IProps {
   structuresData: IStructureProps[];
@@ -24,16 +31,17 @@ interface IProps {
 export const Structure: React.FunctionComponent<IProps> = (props: IProps) => {
   const { structuresData, structureData } = props;
 
-  const expandedRowKeys = [1];
+  const lookupData = {
+    store: store,
+  };
 
+  const statusText = { active: "Active", deactive: "Deactive" };
+  const expandedRowKeys = [1];
+  const allowedPageSizes = [5, 10, 20];
   const popupOptions = {
     title: "Structure Info",
     showTitle: true,
     width: 700,
-  };
-
-  const lookupData = {
-    store: store,
   };
 
   const onEditorPreparing = (e: any) => {
@@ -42,13 +50,13 @@ export const Structure: React.FunctionComponent<IProps> = (props: IProps) => {
       e.editorOptions.value = null;
     }
   };
+
   const onInitNewRow = (e: any) => {
     e.data.parent_id = 1;
   };
 
   const renderTableCell = (data: any) => {
-    console.log(data);
-    return <div>{data.value ? "Active" : "Deactive"}</div>;
+    return <div>{data.value ? statusText.active : statusText.deactive}</div>;
   };
 
   return (
@@ -58,6 +66,7 @@ export const Structure: React.FunctionComponent<IProps> = (props: IProps) => {
         columnAutoWidth={true}
         showRowLines={true}
         showBorders={true}
+        autoExpandAll={false}
         defaultExpandedRowKeys={expandedRowKeys}
         keyExpr="id"
         parentIdExpr="parent_id"
@@ -79,23 +88,62 @@ export const Structure: React.FunctionComponent<IProps> = (props: IProps) => {
           allowAdding={true}
           popup={popupOptions}
           mode="popup"
+          useIcons={true}
         />
-        <Column dataField="name">
-          <ValidationRule type="required" />
+        <Popup
+          title="Employee Info"
+          showTitle={true}
+          width={700}
+          height={525}
+        />
+        <Scrolling mode="standard" />
+        <Paging enabled={true} defaultPageSize={10} />
+        <Pager
+          showPageSizeSelector={true}
+          allowedPageSizes={allowedPageSizes}
+          showInfo={true}
+        />
+        <Column dataField="name" width={800}>
+          <ValidationRule type="required">
+            <RequiredRule message="Name is required" />
+            <PatternRule
+              message="Do not use digits in the Name"
+              pattern={/^[^0-9]+$/}
+            />
+            <StringLengthRule min={3} max={30} />
+          </ValidationRule>
         </Column>
         <Column
           dataField="status"
+          width={800}
           dataType={structureData?.status}
           cellRender={renderTableCell}
-          filterType="string"
         />
         <Column visible={false} dataField="parent_id" caption="Parent">
           <Lookup dataSource={lookupData} valueExpr="id" displayExpr="name" />
           <ValidationRule type="required" />
         </Column>
-        <Column type="buttons">
-          <Button name="edit" />
-          <Button name="delete" />
+        <Column type="buttons" width={300}>
+          <Button
+            name="edit"
+            // icon="icon-pencil"
+            cssClass="icon icon-edit"
+          />
+          <Button
+            name="delete"
+            // icon="icon-bin2"
+            cssClass=" icon icon-delete"
+          />
+          {/*     <Button
+            name="save"
+            icon="icon-floppy-disk"
+            cssClass="icon icon-save"
+          />
+          <Button
+            name="cancel"
+            icon="icon-cross"
+            cssClass="icon icon-cancel"
+          />*/}
         </Column>
       </TreeList>
     </div>

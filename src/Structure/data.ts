@@ -7,7 +7,7 @@ export interface IStructureProps {
   status: boolean;
 }
 
-export const structures:IStructureProps[] = [
+export const structures: IStructureProps[] = [
   {
     id: 1,
     name: "Primitive data structure",
