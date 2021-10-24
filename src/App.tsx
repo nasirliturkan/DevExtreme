@@ -6,8 +6,8 @@ import {
   Redirect,
 } from "react-router-dom";
 
-import { Structure } from "./Structure";
-import { structures } from "./Structure/data";
+import { Structure } from "./components/Structure";
+import { structures } from "./store/structure";
 
 function App() {
   return (

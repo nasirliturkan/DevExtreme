@@ -15,39 +15,29 @@ import {
   Pager,
   Scrolling,
   RequiredRule,
-  Popup,
   PatternRule,
-  StringLengthRule,
 } from "devextreme-react/tree-list";
-import { store, IStructureProps } from "./data";
+import { Switch } from "devextreme-react";
 
-import "../assets/style.scss";
+import { dataSource, IStructureProps } from "../../store/structure";
 
 interface IProps {
   structuresData: IStructureProps[];
-  structureData?: IStructureProps;
 }
 
 export const Structure: React.FunctionComponent<IProps> = (props: IProps) => {
-  const { structuresData, structureData } = props;
-
   const lookupData = {
-    store: store,
+    store: dataSource.store(),
   };
-
+  const { structuresData } = props;
   const statusText = { active: "Active", deactive: "Deactive" };
+
   const expandedRowKeys = [1];
   const allowedPageSizes = [5, 10, 20];
-  const popupOptions = {
-    title: "Structure Info",
-    showTitle: true,
-    width: 700,
-  };
 
   const onEditorPreparing = (e: any) => {
-    if (e.dataField === "parent_id" && e.row.data.id === 1) {
-      e.editorOptions.disabled = true;
-      e.editorOptions.value = null;
+    if (e.dataField === "parent_id" && e.row?.data.id === 1) {
+      e.cancel = true;
     }
   };
 
@@ -55,7 +45,21 @@ export const Structure: React.FunctionComponent<IProps> = (props: IProps) => {
     e.data.parent_id = 1;
   };
 
-  const renderTableCell = (data: any) => {
+  const renderEditStatusValueCell = (status: any) => {
+    return (
+      <Switch
+        defaultValue={status.value}
+        onValueChanged={(changedValue) => {
+          status.setValue(changedValue.value);
+        }}
+        switchedOffText="deactive"
+        switchedOnText="active"
+        width={150}
+      />
+    );
+  };
+
+  const renderStatusValueCell = (data: any) => {
     return <div>{data.value ? statusText.active : statusText.deactive}</div>;
   };
 
@@ -86,53 +90,42 @@ export const Structure: React.FunctionComponent<IProps> = (props: IProps) => {
           allowUpdating={true}
           allowDeleting={true}
           allowAdding={true}
-          popup={popupOptions}
-          mode="popup"
           useIcons={true}
         />
-        <Popup
-          title="Employee Info"
-          showTitle={true}
-          width={700}
-          height={525}
-        />
         <Scrolling mode="standard" />
-        <Paging enabled={true} defaultPageSize={10} />
+        <Paging enabled={true} defaultPageSize={5} />
         <Pager
           showPageSizeSelector={true}
           allowedPageSizes={allowedPageSizes}
           showInfo={true}
         />
-        <Column dataField="name" width={800}>
-          <ValidationRule type="required">
-            <RequiredRule message="Name is required" />
-            <PatternRule
-              message="Do not use digits in the Name"
-              pattern={/^[^0-9]+$/}
-            />
-            <StringLengthRule min={3} max={30} />
-          </ValidationRule>
+        <Column dataField="name">
+          <ValidationRule type="required" />
+          <RequiredRule message="Name is required" />
+          <PatternRule
+            message="Do not use digits in the Name"
+            pattern={/^[^0-9]+$/}
+          />
         </Column>
         <Column
           dataField="status"
-          width={800}
-          dataType={structureData?.status}
-          cellRender={renderTableCell}
+          cellRender={renderStatusValueCell}
+          editCellRender={renderEditStatusValueCell}
         />
-        <Column visible={false} dataField="parent_id" caption="Parent">
+        <Column dataField="parent_id" caption="Parent">
           <Lookup dataSource={lookupData} valueExpr="id" displayExpr="name" />
           <ValidationRule type="required" />
         </Column>
-        <Column type="buttons" width={300}>
+        <Column type="buttons">
+          <Button name="add" icon="add" />
+          <Button name="save" icon="save" />
           <Button
             name="edit"
             // icon="icon-pencil"
-            cssClass="icon icon-edit"
           />
           <Button
             name="delete"
             // icon="icon-bin2"
-            cssClass=" icon icon-delete"
           />
           {/*     <Button
             name="save"

@@ -1,4 +1,5 @@
 import LocalStore from "devextreme/data/local_store";
+import DataSource from "devextreme/data/data_source";
 
 export interface IStructureProps {
   id: number;
@@ -106,8 +107,13 @@ export const structures: IStructureProps[] = [
   },
 ];
 
-export const store = new LocalStore({
+const store = new LocalStore({
   key: "structure",
   data: structures,
   name: "myLocalData",
 });
+
+export const dataSource = new DataSource({
+  store,
+});
+
