@@ -22,6 +22,8 @@ import { Switch } from "devextreme-react";
 import { dataSource, IStructureProps } from "../../store/structure";
 import { StringLengthRule } from "devextreme-react/form";
 
+import "../../assets/style.scss";
+
 interface IProps {
   structuresData: IStructureProps[];
 }
@@ -140,26 +142,10 @@ export const Structure: React.FunctionComponent<IProps> = (props: IProps) => {
 
         {/*Buttons column*/}
         <Column type="buttons">
-          <Button name="add" icon="add" />
-          <Button name="save" icon="save" />
-          <Button
-            name="edit"
-            // icon="icon-pencil"
-          />
-          <Button
-            name="delete"
-            // icon="icon-bin2"
-          />
-          {/*     <Button
-            name="save"
-            icon="icon-floppy-disk"
-            cssClass="icon icon-save"
-          />
-          <Button
-            name="cancel"
-            icon="icon-cross"
-            cssClass="icon icon-cancel"
-          />*/}
+          <Button name="save" icon="icon icon-folder-download" />
+          <Button name="edit" icon="icon icon-pencil" />
+          <Button name="delete" icon="icon icon-bin" />
+          <Button name="cancel" icon="icon icon-exit" />
         </Column>
       </TreeList>
     </div>
