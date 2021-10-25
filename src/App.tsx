@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 
 import { Structure } from "./components/Structure";
-import { structures } from "./store/structure";
+import {data} from './mock/data.json'
 
 function App() {
   return (
@@ -22,7 +22,7 @@ function App() {
             }}
           />
           <Route exact path="/structure">
-            <Structure structuresData={structures} />
+            <Structure structuresData={data} />
           </Route>
         </Switch>
       </Router>

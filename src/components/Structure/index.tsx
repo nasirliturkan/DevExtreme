@@ -18,9 +18,9 @@ import {
   AsyncRule,
 } from "devextreme-react/tree-list";
 import { Switch } from "devextreme-react";
+import { StringLengthRule } from "devextreme-react/form";
 
 import { dataSource, IStructureProps } from "../../store/structure";
-import { StringLengthRule } from "devextreme-react/form";
 
 import "../../assets/style.scss";
 
@@ -28,24 +28,28 @@ interface IProps {
   structuresData: IStructureProps[];
 }
 
+enum EStatus {
+  active = "active",
+  deactive = "deactive",
+}
+
 export const Structure: React.FunctionComponent<IProps> = (props: IProps) => {
   const { structuresData } = props;
   const lookupData = {
     store: dataSource.store(),
   };
-  const statusText = { active: "Active", deactive: "Deactive" };
 
   const expandedRowKeys = [1];
   const allowedPageSizes = [5, 10, 20];
 
-  const onEditorPreparing = (e: any) => {
-    if (e.dataField === "parent_id" && e.row?.data.id === 1) {
-      e.cancel = true;
+  const onEditorPreparing = (event: any) => {
+    if (event.dataField === "parent_id" && event.row?.data.id === 1) {
+      event.cancel = true;
     }
   };
 
-  const onInitNewRow = (e: any) => {
-    e.data.parent_id = 1;
+  const onInitNewRow = (event: any) => {
+    event.data.parent_id = 1;
   };
 
   const renderUniqueValueValidation = (value: any) => {
@@ -55,7 +59,7 @@ export const Structure: React.FunctionComponent<IProps> = (props: IProps) => {
       .then((structures: any) => {
         const findDuplicate = structures.find(
           (data: any) =>
-            data.name === value.data.name && data.id !== value.data.id
+            data.name === value.data?.name && data.id !== value.data.id
         );
         return !findDuplicate?.id;
       });
@@ -68,15 +72,15 @@ export const Structure: React.FunctionComponent<IProps> = (props: IProps) => {
         onValueChanged={(changedValue) => {
           status.setValue(changedValue.value);
         }}
-        switchedOffText="deactive"
-        switchedOnText="active"
+        switchedOffText={EStatus.deactive}
+        switchedOnText={EStatus.active}
         width={150}
       />
     );
   };
 
   const renderStatusValueCell = (data: any) => {
-    return <div>{data.value ? statusText.active : statusText.deactive}</div>;
+    return <div>{data.value ? EStatus.active : EStatus.deactive}</div>;
   };
 
   return (
