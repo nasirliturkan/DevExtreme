@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   TreeList,
   Editing,
@@ -114,6 +114,7 @@ export const Structure: React.FunctionComponent<IProps> = (props: IProps) => {
           allowedPageSizes={allowedPageSizes}
           showInfo={true}
         />
+
         {/*Name Column*/}
         <Column dataField="name" name="name">
           <ValidationRule type="required" />
@@ -128,6 +129,7 @@ export const Structure: React.FunctionComponent<IProps> = (props: IProps) => {
             message="Name must be unique"
           />
         </Column>
+
         {/*Parent column*/}
         <Column dataField="parent_id" caption="Parent">
           <Lookup dataSource={lookupData} valueExpr="id" displayExpr="name" />
